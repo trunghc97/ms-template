@@ -1,6 +1,7 @@
-package com.example.trunghc.dto.request;
+package com.example.trunghc.dto.request.common;
 
 
+import com.example.trunghc.dto.request.BaseRequest;
 import lombok.*;
 
 @Data

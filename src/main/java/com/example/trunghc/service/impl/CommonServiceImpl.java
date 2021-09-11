@@ -1,8 +1,10 @@
 package com.example.trunghc.service.impl;
 
-import com.example.trunghc.dto.request.LoginRequest;
-import com.example.trunghc.dto.response.LoginResponse;
+import com.example.trunghc.dto.request.common.LoginRequest;
+import com.example.trunghc.dto.request.common.RegisterRequest;
 import com.example.trunghc.dto.response.Result;
+import com.example.trunghc.dto.response.common.LoginResponse;
+import com.example.trunghc.dto.response.common.RegisterResponse;
 import com.example.trunghc.dto.sercurity.UserPrincipal;
 import com.example.trunghc.model.Token;
 import com.example.trunghc.model.User;
@@ -13,7 +15,6 @@ import com.example.trunghc.utility.JwtUtility;
 import com.example.trunghc.utility.Utility;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -47,15 +48,21 @@ public class CommonServiceImpl implements CommonService {
             }
 
             UserPrincipal userPrincipal = new UserPrincipal();
+            userPrincipal.setId(user.getId());
             userPrincipal.setUserId(user.getUserId());
             userPrincipal.setUsername(user.getName());
             userPrincipal.setPassword(user.getPassword());
             userPrincipal.setAuthorities(List.of(user.getRole()));
 
-            Token token = new Token();
+            Token token = tokenRepository.findByUserId(user.getId());
+
+            if (token == null) {
+                token = new Token();
+                token.setCreatedBy(String.valueOf(userPrincipal.getId()));
+                token.setUserId(userPrincipal.getId());
+            }
             token.setToken(jwtUtility.generateToken(userPrincipal));
             token.setTokenExpDate(jwtUtility.generateExpirationDate());
-            token.setCreatedBy(userPrincipal.getUserId());
             tokenRepository.save(token);
 
             response.setResult(result);
@@ -68,4 +75,25 @@ public class CommonServiceImpl implements CommonService {
 
         return ResponseEntity.ok(response);
     }
+
+    @Override
+    public ResponseEntity<RegisterResponse> doRegister(RegisterRequest request) {
+        Result result = new Result();
+        RegisterResponse response = new RegisterResponse();
+
+        try {
+            User user = new User(request);
+            user.setPassword(utility.generatePassword(request.getPassword()));
+            userRepository.save(user);
+
+            response.setUser(user);
+        } catch (Exception e) {
+            result = new Result(e.getMessage(), false, "000");
+        }
+
+        response.setResult(result);
+        return ResponseEntity.ok(response);
+
+    }
+
 }

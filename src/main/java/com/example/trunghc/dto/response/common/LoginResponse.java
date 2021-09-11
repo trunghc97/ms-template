@@ -1,5 +1,6 @@
-package com.example.trunghc.dto.response;
+package com.example.trunghc.dto.response.common;
 
+import com.example.trunghc.dto.response.BaseResponse;
 import com.example.trunghc.model.Token;
 import lombok.Data;
 

@@ -1,6 +1,7 @@
 package com.example.trunghc.model;
 
-import com.example.trunghc.dto.request.RegisterRequest;
+import com.example.trunghc.dto.request.common.RegisterRequest;
+import com.example.trunghc.dto.request.user.CreateNewUserRequest;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -34,6 +35,13 @@ public class User extends BaseEntity {
         name = request.getUserName();
         email = request.getEmail();
         role = "USER";
+    }
+
+    public User(CreateNewUserRequest request) {
+        userId = request.getUserId();
+        name = request.getUserName();
+        email = request.getEmail();
+        role = request.getRole();
     }
 
 }

@@ -9,6 +9,7 @@ import java.util.Collection;
 @Getter
 @Setter
 public class UserPrincipal implements UserDetails {
+    private Long id;
     private String userId;
     private String username;
     private String password;

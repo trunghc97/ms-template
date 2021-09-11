@@ -1,17 +1,19 @@
 package com.example.trunghc.utility;
 
 import com.example.trunghc.dto.sercurity.UserPrincipal;
-import com.nimbusds.jose.JWSAlgorithm;
-import com.nimbusds.jose.JWSHeader;
-import com.nimbusds.jose.JWSSigner;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACSigner;
+import com.nimbusds.jose.crypto.MACVerifier;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
+import net.minidev.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import java.sql.Date;
+import java.text.ParseException;
+import java.util.Date;
 
 
 @Component
@@ -38,8 +40,44 @@ public class JwtUtility {
         return token;
     }
 
-    public Date generateExpirationDate() {
-        return new Date(System.currentTimeMillis() + 864000000);
+    public java.sql.Date generateExpirationDate() {
+        return new java.sql.Date(System.currentTimeMillis() + 864000000);
+    }
+
+    private JWTClaimsSet getClaimsFromToken(String token) {
+        JWTClaimsSet claims = null;
+        try {
+            SignedJWT signedJWT = SignedJWT.parse(token);
+            JWSVerifier verifier = new MACVerifier(SECRET.getBytes());
+            if (signedJWT.verify(verifier)) {
+                claims = signedJWT.getJWTClaimsSet();
+            }
+        } catch (ParseException | JOSEException e) {
+            logger.error(e.getMessage());
+        }
+        return claims;
+    }
+
+    public UserPrincipal getUserFromToken(String token) {
+        UserPrincipal user = null;
+        try {
+            JWTClaimsSet claims = getClaimsFromToken(token);
+            if (claims != null && isTokenExpired(claims)) {
+                JSONObject jsonObject = (JSONObject) claims.getClaim(USER);
+                user = new ObjectMapper().readValue(jsonObject.toJSONString(), UserPrincipal.class);
+            }
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+        }
+        return user;
+    }
+
+    private Date getExpirationDateFromToken(JWTClaimsSet claims) {
+        return claims != null ? claims.getExpirationTime() : new Date();
+    }
+
+    private boolean isTokenExpired(JWTClaimsSet claims) {
+        return getExpirationDateFromToken(claims).after(new Date());
     }
 
 }

@@ -1,41 +1,45 @@
 package com.example.trunghc.controller;
 
-import com.example.trunghc.model.User;
+import com.example.trunghc.dto.request.user.CreateNewUserRequest;
+import com.example.trunghc.dto.response.user.GetListUserResponse;
+import com.example.trunghc.dto.response.user.GetUserResponse;
 import com.example.trunghc.repositories.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.example.trunghc.service.UserService;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Optional;
 
 @RestController
 @RequestMapping("users")
 public class UserController {
 
-    @Autowired
-    UserRepository userRepository;
+    private final UserRepository userRepository;
+    private final UserService userService;
+
+    public UserController(UserRepository userRepository, UserService userService) {
+        this.userRepository = userRepository;
+        this.userService = userService;
+    }
 
     @GetMapping("/")
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
     public @ResponseBody
-    Iterable<User> getAllUsers() {
-        return userRepository.findAll();
+    ResponseEntity<GetListUserResponse> getAllUsers() {
+        return userService.getListUser();
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('USER')")
     public @ResponseBody
-    Optional<User> getUser(@PathVariable Integer id) {
-        return userRepository.findById(id);
+    ResponseEntity<GetUserResponse> getUser(@PathVariable Integer id) {
+        return userService.getUser(id);
     }
 
     @PostMapping("/")
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
     public @ResponseBody
-    String addNewUser(@RequestParam String name
-            , @RequestParam String email) {
-
-        User n = new User();
-        n.setName(name);
-        n.setEmail(email);
-        userRepository.save(n);
-        return "Saved";
+    ResponseEntity<GetUserResponse> addNewUser(@RequestBody CreateNewUserRequest request) {
+        return userService.createUser(request);
     }
 
 }
