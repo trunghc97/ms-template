@@ -1,6 +1,6 @@
 package com.example.trunghc.controller;
 
-import com.example.trunghc.dto.User;
+import com.example.trunghc.model.User;
 import com.example.trunghc.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
