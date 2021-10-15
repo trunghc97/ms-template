@@ -1,7 +1,9 @@
 package com.example.trunghc.service.impl;
 
+import com.example.trunghc.dto.base.TokenDto;
 import com.example.trunghc.dto.request.common.LoginRequest;
 import com.example.trunghc.dto.request.common.RegisterRequest;
+import com.example.trunghc.dto.response.BaseResponse;
 import com.example.trunghc.dto.response.Result;
 import com.example.trunghc.dto.response.common.LoginResponse;
 import com.example.trunghc.dto.response.common.RegisterResponse;
@@ -15,6 +17,7 @@ import com.example.trunghc.utility.JwtUtility;
 import com.example.trunghc.utility.Utility;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -54,7 +57,7 @@ public class CommonServiceImpl implements CommonService {
             userPrincipal.setPassword(user.getPassword());
             userPrincipal.setAuthorities(List.of(user.getRole()));
 
-            Token token = tokenRepository.findByUserId(user.getId());
+            Token token = tokenRepository.findByUserIdAndDeleted(user.getId(), false);
 
             if (token == null) {
                 token = new Token();
@@ -65,8 +68,10 @@ public class CommonServiceImpl implements CommonService {
             token.setTokenExpDate(jwtUtility.generateExpirationDate());
             tokenRepository.save(token);
 
+            TokenDto tokenDto = new TokenDto(token);
+
             response.setResult(result);
-            response.setToken(token);
+            response.setToken(tokenDto);
         } catch (Exception e) {
             result = new Result(e.getMessage(), false, "000");
             response.setResult(result);
@@ -94,6 +99,25 @@ public class CommonServiceImpl implements CommonService {
         response.setResult(result);
         return ResponseEntity.ok(response);
 
+    }
+
+    @Override
+    public ResponseEntity<BaseResponse> doLogout() {
+        Result result = new Result();
+        BaseResponse response = new BaseResponse();
+
+        try {
+            String strToken = (String) SecurityContextHolder.getContext().getAuthentication().getCredentials();
+
+            Token token = tokenRepository.findByToken(strToken);
+            token.setDeleted(true);
+            tokenRepository.saveAndFlush(token);
+        } catch (Exception e) {
+            result = new Result(e.getMessage(), false, "000");
+        }
+
+        response.setResult(result);
+        return ResponseEntity.ok(response);
     }
 
 }

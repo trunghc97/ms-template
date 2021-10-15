@@ -49,13 +49,14 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             }
         }
 
-        if (null != user && null != token && token.getTokenExpDate().after(new Date())) {
+        if (null != user && null != token && !token.isDeleted() && token.getTokenExpDate().after(new Date())) {
             Set<GrantedAuthority> authorities = new HashSet<>();
             user.getAuthorities().forEach(p -> authorities.add(new SimpleGrantedAuthority((String) p)));
-            UsernamePasswordAuthenticationToken authentication =
-                    new UsernamePasswordAuthenticationToken(user, null, authorities);
+            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(user, token.getToken(), authorities);
             authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
             SecurityContextHolder.getContext().setAuthentication(authentication);
+        } else {
+            SecurityContextHolder.getContext().setAuthentication(null);
         }
 
         filterChain.doFilter(request, response);

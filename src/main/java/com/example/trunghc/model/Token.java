@@ -3,10 +3,8 @@ package com.example.trunghc.model;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import java.sql.Date;
+import javax.persistence.*;
+import java.util.Date;
 
 @Entity
 @Table(name = "tokens")
@@ -20,5 +18,17 @@ public class Token extends BaseEntity {
     private Date tokenExpDate;
 
     private Long userId;
+
+    @PrePersist
+    private void prePersistFunction() {
+        this.setCreatedBy("System");
+        this.setCreatedAt(new Date());
+    }
+
+    @PreUpdate
+    private void preUpdateFunction() {
+        this.setUpdatedBy("System");
+        this.setUpdatedAt(new Date());
+    }
 
 }

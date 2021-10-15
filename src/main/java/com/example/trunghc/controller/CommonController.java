@@ -2,6 +2,7 @@ package com.example.trunghc.controller;
 
 import com.example.trunghc.dto.request.common.LoginRequest;
 import com.example.trunghc.dto.request.common.RegisterRequest;
+import com.example.trunghc.dto.response.BaseResponse;
 import com.example.trunghc.dto.response.common.LoginResponse;
 import com.example.trunghc.dto.response.common.RegisterResponse;
 import com.example.trunghc.service.CommonService;
@@ -27,6 +28,11 @@ public class CommonController {
     @PostMapping(path = "/login")
     public ResponseEntity<LoginResponse> doLogin(@RequestBody LoginRequest request) {
         return commonService.doLogin(request);
+    }
+
+    @PostMapping(path = "/logout")
+    public ResponseEntity<BaseResponse> doLogout() {
+        return commonService.doLogout();
     }
 
 }
