@@ -1,7 +1,7 @@
 package com.example.trunghc.config;
 
 import com.example.trunghc.dto.sercurity.UserPrincipal;
-import com.example.trunghc.model.Token;
+import com.example.trunghc.entity.Token;
 import com.example.trunghc.repositories.TokenRepository;
 import com.example.trunghc.utility.JwtUtility;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

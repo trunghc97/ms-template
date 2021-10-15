@@ -1,6 +1,6 @@
 package com.example.trunghc.dto.base;
 
-import com.example.trunghc.model.Token;
+import com.example.trunghc.entity.Token;
 import lombok.Data;
 
 import java.io.Serializable;

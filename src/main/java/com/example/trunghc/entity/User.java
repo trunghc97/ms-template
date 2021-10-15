@@ -1,4 +1,4 @@
-package com.example.trunghc.model;
+package com.example.trunghc.entity;
 
 import com.example.trunghc.dto.request.common.RegisterRequest;
 import com.example.trunghc.dto.request.user.CreateNewUserRequest;

@@ -1,4 +1,4 @@
-package com.example.trunghc.model;
+package com.example.trunghc.entity;
 
 import lombok.Getter;
 import lombok.Setter;

@@ -4,7 +4,7 @@ import com.example.trunghc.dto.request.user.CreateNewUserRequest;
 import com.example.trunghc.dto.response.Result;
 import com.example.trunghc.dto.response.user.GetListUserResponse;
 import com.example.trunghc.dto.response.user.GetUserResponse;
-import com.example.trunghc.model.User;
+import com.example.trunghc.entity.User;
 import com.example.trunghc.repositories.UserRepository;
 import com.example.trunghc.service.UserService;
 import com.example.trunghc.utility.Utility;

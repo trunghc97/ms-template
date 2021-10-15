@@ -1,6 +1,6 @@
 package com.example.trunghc.repositories;
 
-import com.example.trunghc.model.User;
+import com.example.trunghc.entity.User;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
