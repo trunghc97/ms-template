@@ -29,7 +29,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyAuthority('USER')")
+    @PreAuthorize("hasAnyAuthority('USER,ADMIN')")
     public @ResponseBody
     ResponseEntity<GetUserResponse> getUser(@PathVariable Integer id) {
         return userService.getUser(id);
